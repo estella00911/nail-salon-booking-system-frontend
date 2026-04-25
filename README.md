@@ -11,6 +11,15 @@ This project demonstrates authentication system, service browsing, and booking w
 ### Scope
 The current version focuses on authentication system, customer booking flow, and service browsing. Advanced filter for services are planned for future iterations.
 
+## Screenshots
+The application supports responsive design across mobile and desktop views.
+
+### Mobile View
+![Mobile Login](./screenshots/login-mobile-view.png)
+
+### Desktop View
+![Register Desktop](./screenshots/register-desktop-view.png)
+
 ## Techniques Used
 - React
 - TypeScript
