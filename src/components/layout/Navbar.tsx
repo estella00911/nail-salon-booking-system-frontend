@@ -1,4 +1,4 @@
-import {useState} from "react";
+import { useCallback, useEffect, useRef, useState} from "react";
 import {Link} from "react-router-dom";
 import Button, {type ButtonVariant} from "../Button.tsx";
 import BurgerMenuIcon from "../../assets/icons/burger-menu.svg";
@@ -46,9 +46,11 @@ const MobileMenuButton = ({isOpen, onClick}: {
 };
 
 const MobileOptions = ({
-  isOpen
+  isOpen,
+  onClose,
 }: {
-  isOpen: boolean
+  isOpen: boolean;
+  onClose: () => void;
 }) => {
   return (
     <div className={`border-b border-gray-300 ${isOpen ? "" : "hidden"}`}>
@@ -57,6 +59,7 @@ const MobileOptions = ({
           <Link
             key={item.to}
             to={item.to}
+            onClick={onClose}
             className="px-2 py-2 cursor-pointer block border-t border-gray-300 hover:bg-gray-200"
           >
             <Button variant="base" disabled={item?.disabled}>
@@ -91,15 +94,40 @@ const DesktopNav = () => {
 };
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const modalRef = useRef<HTMLDivElement | null>(null);
+
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    if (
+      modalRef.current &&
+      !modalRef.current.contains(e.target as Node)
+    ) {
+      setIsOpen(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [handleClickOutside]);
+
   return (
-    <div className="lg:hidden">
-      <MobileMenuButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}/>
-      <MobileOptions isOpen={isOpen}/>
+
+    <div ref={modalRef} className="lg:hidden">
+      <MobileMenuButton
+        isOpen={isOpen}
+        onClick={() => setIsOpen(!isOpen)}
+      />
+      <MobileOptions
+        isOpen={isOpen}
+        onClose={() => setIsOpen(prev => !prev)}
+      />
     </div>
   )
 }
 const Navbar = () => {
-
   return (
     <>
       <MobileNav/>

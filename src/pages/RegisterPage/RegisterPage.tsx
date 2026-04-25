@@ -3,7 +3,7 @@ import { useForm, type SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from 'zod';
 import {useState} from "react";
-import {AuthForm} from "../../components/auth";
+import {AuthForm, FormField} from "../../components/auth";
 import Button from "../../components/Button.tsx";
 import EyeShowIcon from "../../assets/icons/eye-show.svg?react";
 import EyeHideIcon from "../../assets/icons/eye-hide.svg?react";
@@ -11,6 +11,8 @@ import {fetchUserRegister} from "../../api/auth.api.ts";
 import {setToken} from "../../utils/auth.utils.ts";
 import {getErrorMessage} from "../../utils/getErrorMessage.ts";
 
+const inputClassName = "mb-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black";
+const passwordIconClassName = "absolute h-5 w-5 bottom-4 right-2";
 
 const registerBaseSchema = z.object({
   name: z.string().min(2, { message: "名字至少需要 2 個字" }),
@@ -40,7 +42,7 @@ const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const [isPwdVisible, setIsPwdVisible] = useState(false);
   const [isConfirmedPwdVisible, setIsConfirmedPwdVisible] = useState(false);
-  const [loginError, setLoginError] = useState("");
+  const [registerError, setRegisterError] = useState("");
 
   const {
     register,
@@ -81,7 +83,7 @@ const RegisterPage = () => {
       }
       navigate('/services');
     } catch(err) {
-      setLoginError(getErrorMessage(err));
+      setRegisterError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -93,88 +95,90 @@ const RegisterPage = () => {
       description="填寫資料開始使用"
       footer={<>
         已經有帳號？
-        <Link to="/login" className="ml-1 font-medium">
+        <Link to="/login" className="ml-1 font-medium text-blue-500">
           登入
         </Link>
       </>}
     >
       <form onSubmit={handleSubmit(handleRegister)}>
-        <div className="w-full flex flex-col mb-6">
-          <label htmlFor="name" className="flex items-center font-medium mb-1">
-            名字<span className="ml-1 text-red-500">*</span>
-          </label>
+        <FormField
+          label="名字"
+          htmlFor="name"
+          required={true}
+          error={errors.name?.message}
+        >
           <input
             {...register('name', { required: true })}
             id="name"
             placeholder="請輸入名字"
-            className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+            className={inputClassName}
           />
-          {errors.name && <p className="text-red-500 text-sm">{errors.name?.message}</p>}
-        </div>
-        <div className="w-full flex flex-col mb-6">
-          <label htmlFor="email" className="flex items-center font-medium mb-1">
-            信箱<span className="ml-1 text-red-500">*</span>
-          </label>
+        </FormField>
+        <FormField
+          label="信箱"
+          htmlFor="email"
+          required={true}
+          error={errors.email?.message}
+        >
           <input
             {...register('email', { required: true })}
             id="email"
             placeholder="請輸入信箱"
-            className="mb-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+            className={inputClassName}
           />
-          {errors.name?.message && (
-            <p className="text-red-500 text-sm">{String(errors.name.message)}</p>
-          )}
-        </div>
-        <div className="relative flex flex-col mb-6">
-          <label htmlFor="password" className="flex items-center font-medium mb-1">
-            密碼<span className="ml-1 text-red-500">*</span>
-          </label>
-          <input
-            {...register('password', {required: true})}
-            id="password"
-            placeholder="請輸入密碼"
-            type={isPwdVisible ? "text" : "password"}
-            className="mb-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-          />
-          <button
-            type="button"
-            onClick={() => setIsPwdVisible(prev => !prev)}
-            className="text-gray-700 font-meidum"
-          >
-            {isPwdVisible
-              ? <EyeHideIcon className="absolute h-5 w-5 top-10 right-2"/>
-              : <EyeShowIcon className="absolute h-5 w-5 top-10 right-2"/>
-            }
-          </button>
-          {errors.password?.message && (
-            <p className="text-red-500 text-sm">{String(errors.password?.message)}</p>
-          )}
-        </div>
-        <div className="relative flex flex-col mb-6">
-          <label htmlFor="password" className="flex items-center font-medium mb-1">
-            確認密碼<span className="ml-1 text-red-500">*</span>
-          </label>
-          <input
-            {...register('confirmedPassword', {required: true})}
-            id="confirmedPassword"
-            placeholder="請再次輸入密碼"
-            type={isConfirmedPwdVisible ? "text" : "password"}
-            className="mb-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-          />
-          <button
-            type="button"
-            onClick={() => setIsConfirmedPwdVisible(prev => !prev)}
-            className="text-gray-700 font-meidum"
-          >
-            {isConfirmedPwdVisible
-              ? <EyeHideIcon className="absolute h-5 w-5 top-10 right-2"/>
-              : <EyeShowIcon className="absolute h-5 w-5 top-10 right-2"/>
-            }
-          </button>
-          {errors.confirmedPassword?.message && (
-            <p className="text-red-500 text-sm">{String(errors.confirmedPassword?.message)}</p>
-          )}
-        </div>
+        </FormField>
+        <FormField
+          label="密碼"
+          htmlFor="password"
+          required={true}
+          error={errors.password?.message}
+        >
+          <div className="relative">
+            <input
+              {...register('password', {required: true})}
+              id="password"
+              placeholder="請輸入密碼"
+              type={isPwdVisible ? "text" : "password"}
+              className={inputClassName}
+            />
+            <button
+              type="button"
+              onClick={() => setIsPwdVisible(prev => !prev)}
+              className="text-gray-700 font-meidum"
+            >
+              {isPwdVisible
+                ? <EyeHideIcon className={passwordIconClassName}/>
+                : <EyeShowIcon className={passwordIconClassName}/>
+              }
+            </button>
+          </div>
+        </FormField>
+        <FormField
+          label="確認密碼"
+          htmlFor="confirmedPassword"
+          required={true}
+          error={errors.confirmedPassword?.message}
+        >
+          <div className="relative">
+            <input
+              {...register('confirmedPassword', {required: true})}
+              id="confirmedPassword"
+              placeholder="請再次輸入密碼"
+              type={isConfirmedPwdVisible ? "text" : "password"}
+              className={inputClassName}
+            />
+            <button
+              type="button"
+              onClick={() => setIsConfirmedPwdVisible(prev => !prev)}
+              className="text-gray-700 font-meidum"
+            >
+              {isConfirmedPwdVisible
+                ? <EyeHideIcon className={passwordIconClassName}/>
+                : <EyeShowIcon className={passwordIconClassName}/>
+              }
+            </button>
+          </div>
+        </FormField>
         <div className="flex justify-between items-center gap-2">
           <div>
             <input
@@ -189,7 +193,8 @@ const RegisterPage = () => {
           </div>
           <span className="invisible">placeholder</span>
         </div>
-        {loginError && <p className="flex justify-center text-red-500 text-sm">{loginError}</p>}
+        {/* register button & errorMsg*/}
+        {registerError && <p className="mt-2 flex justify-center text-red-500 text-sm">{registerError}</p>}
         <Button
           className="mt-4 mx-auto block"
           disabled={loading}

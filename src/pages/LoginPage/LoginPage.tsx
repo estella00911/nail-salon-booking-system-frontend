@@ -11,8 +11,10 @@ import {getErrorMessage} from "../../utils/getErrorMessage.ts";
 import AuthForm from "../../components/auth/AuthForm.tsx";
 import EyeShowIcon from "../../assets/icons/eye-show.svg?react";
 import EyeHideIcon from "../../assets/icons/eye-hide.svg?react";
+import {FormField} from "../../components/auth";
 
-
+const inputClassName = "mb-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black";
+const passwordIconClassName = "absolute h-5 w-5 bottom-4 right-2";
 const schema = z
   .object({
     email: z.email({error: "Email 格式不正確"}),
@@ -74,50 +76,54 @@ const LoginPage = () => {
       footer={<>
         <p className="mt-4 flex justify-center text-gray-500 text-sm">
           還沒加入嗎？
-          <Link to="/register" className="text-sm text-red-400">
+          <Link to="/register" className="ml-1 font-medium text-blue-500">
             現在免費註冊吧！
           </Link>
         </p>
       </>}
     >
       <form onSubmit={handleSubmit(handleLogin)}>
-        <div className="w-full flex flex-col mb-6">
-          <label htmlFor="email" className="flex items-center font-medium mb-1">
-            信箱<span className="ml-1 text-red-500">*</span>
-          </label>
+        <FormField
+          label="信箱"
+          htmlFor="email"
+          error={errors.email?.message}
+          required={true}
+        >
           <input
             {...register('email', { required: true })}
             id="email"
             placeholder="請輸入信箱"
-            className="mb-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+            className={inputClassName}
           />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email?.message}</p>}
-        </div>
-        <div className="relative flex flex-col mb-6">
-          <label htmlFor="password" className="flex items-center font-medium mb-1">
-            密碼<span className="ml-1 text-red-500">*</span>
-          </label>
-          <input
-            {...register('password', {required: true})}
-            id="password"
-            placeholder="請輸入密碼"
-            type={isPasswordVisible ? "text" :"password"}
-            className="mb-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
-          >
-          </input>
-          <button
-            type="button"
-            onClick={() => setIsPasswordVisible(prev => !prev)}
-            className="text-gray-700 font-meidum"
-          >
-            {isPasswordVisible
-              ? <EyeHideIcon className="absolute h-5 w-5 top-10 right-2"/>
-              : <EyeShowIcon className="absolute h-5 w-5 top-10 right-2"/>
-            }
-          </button>
-          {errors.password && <p className="text-red-500 text-sm">{errors.password?.message}</p>}
-        </div>
-        <div className="flex justify-center items-center gap-2">
+        </FormField>
+        <FormField
+          label="密碼"
+          htmlFor="password"
+          required={true}
+          error={errors.password?.message}
+        >
+          <div className="relative">
+            <input
+              {...register('password', {required: true})}
+              id="password"
+              placeholder="請輸入密碼"
+              type={isPasswordVisible ? "text" :"password"}
+              className={inputClassName}
+            >
+            </input>
+            <button
+              type="button"
+              onClick={() => setIsPasswordVisible(prev => !prev)}
+              className="text-gray-700 font-medium"
+            >
+              {isPasswordVisible
+                ? <EyeHideIcon className={passwordIconClassName}/>
+                : <EyeShowIcon className={passwordIconClassName}/>
+              }
+            </button>
+          </div>
+        </FormField>
+        <div className="flex justify-between items-center gap-2">
           <label htmlFor="remember-me">
             <input
               {...register('rememberMe')}
@@ -126,11 +132,14 @@ const LoginPage = () => {
               type={"checkbox"}/>
             記住我
           </label>
-          <a className="cursor-not-allowed inline-block align-baseline text-sm text-gray-500 hover:text-gray-800" href="#">
+          <a
+            className="cursor-not-allowed inline-block align-baseline text-sm text-gray-500 hover:text-gray-800"
+             href="#"
+          >
             忘記密碼？
           </a>
         </div>
-        {loginError && <p className="flex justify-center text-red-500 text-sm">{loginError}</p>}
+        {loginError && <p className="mt-2 flex justify-center text-red-500 text-sm">{loginError}</p>}
         <Button
           className="mt-4 mx-auto block"
           disabled={loading}
