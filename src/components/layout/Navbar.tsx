@@ -1,10 +1,8 @@
-import {type ReactNode, useState} from "react";
+import {useState} from "react";
 import {Link} from "react-router-dom";
 import Button, {type ButtonVariant} from "../Button.tsx";
 import BurgerMenuIcon from "../../assets/icons/burger-menu.svg";
 import CloseIcon from "../../assets/icons/close.svg";
-
-// type Variant = "primary" | "init" | "secondary" | "outline" | "base";
 
 type NavItem = {
   name: string;
@@ -70,20 +68,14 @@ const MobileOptions = ({
     </div>
   );
 }
-const LeftSide = () => {
-  return <div className="cursor-pointer">Nail Salon</div>;
-};
-
-const RightSide = ({children}: { children: ReactNode }) => {
-  return <div className="flex gap-6">{children}</div>;
-};
-
 
 const DesktopNav = () => {
   return (
     <div className="hidden lg:flex gap-6 justify-between items-center p-4">
-      <LeftSide/>
-      <RightSide>
+      <div className="text-2xl cursor-pointer">
+        <h1>Nail Salon</h1>
+      </div>
+      <div className="flex gap-6">
         {navItems.map((item:NavItem)=> {
           return (
             <Link key={item.to} to={item.to}>
@@ -93,7 +85,7 @@ const DesktopNav = () => {
             </Link>
           )
         })}
-      </RightSide>
+      </div>
     </div>
   );
 };

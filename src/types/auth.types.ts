@@ -7,7 +7,7 @@ interface RegisterPayload extends AuthPayload {
     name: string;
 }
 
-interface LoginPayload extends AuthPayload{}
+type LoginPayload = AuthPayload;
 
 interface User {
     id: number;

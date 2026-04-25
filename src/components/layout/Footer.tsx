@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-// @ts-ignore
 import FaceBookIcon from "../../assets/icons/facebook.svg?react";
-// @ts-ignore
 import InstagramIcon from "../../assets/icons/instagram.svg?react";
 import ChevronIcon from "../../assets/icons/chevron-down.svg";
 import StarIcon from "../../assets/icons/star.svg";
